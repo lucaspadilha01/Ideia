@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Claude Remote">
+<meta name="theme-color" content="#111111">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="stylesheet" href="/style.css">
+<title>Claude Remote</title>
+</head>
+<body>
+<header><h1>Claude Remote</h1><button id="logout" hidden>Sair</button></header>
+
+<section id="login">
+  <p>Cole o token do servidor.</p>
+  <input id="token" type="password" autocomplete="off" placeholder="token">
+  <button id="loginBtn">Entrar</button>
+</section>
+
+<main id="app" hidden>
+  <nav>
+    <button data-tab="chat" class="active">Chat</button>
+    <button data-tab="files">Arquivos</button>
+    <button data-tab="sessions">Sessões</button>
+  </nav>
+
+  <section id="chat" class="tab">
+    <div class="row">
+      <select id="project" aria-label="Projeto"></select>
+      <select id="profile" aria-label="Perfil"><option>readonly</option><option>edit</option><option>full</option></select>
+      <button id="newSession">Nova</button>
+    </div>
+    <div id="out" aria-live="polite"></div>
+    <div class="row">
+      <textarea id="prompt" rows="3" placeholder="Envie um prompt…"></textarea>
+    </div>
+    <div class="row"><button id="send">Enviar</button><button id="cancel" hidden>Cancelar</button></div>
+  </section>
+
+  <section id="files" class="tab" hidden>
+    <div id="crumb"></div><ul id="fileList"></ul><pre id="fileView"></pre>
+  </section>
+
+  <section id="sessions" class="tab" hidden><ul id="sessionList"></ul></section>
+</main>
+<div id="status" role="status"></div>
+<script src="/app.js" type="module"></script>
+</body>
+</html>

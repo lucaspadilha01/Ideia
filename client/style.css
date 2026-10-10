@@ -1,0 +1,14 @@
+:root { color-scheme: dark light; --bg:#111; --fg:#eee; --mut:#888; --ac:#d97757; --card:#1c1c1e; }
+@media (prefers-color-scheme: light) { :root { --bg:#fafafa; --fg:#111; --card:#fff; --mut:#666; } }
+* { box-sizing: border-box; }
+body { margin:0; background:var(--bg); color:var(--fg); font:16px/1.4 -apple-system, system-ui, sans-serif; padding: env(safe-area-inset-top) 16px env(safe-area-inset-bottom); }
+header { display:flex; justify-content:space-between; align-items:center; }
+h1 { font-size:1.1rem; }
+button, select, input, textarea { font:inherit; color:inherit; background:var(--card); border:1px solid #444; border-radius:8px; padding:10px; min-height:44px; }
+button { background:var(--ac); border:0; color:#fff; }
+nav { display:flex; gap:8px; margin-bottom:8px; } nav button { flex:1; background:var(--card); color:var(--fg); } nav .active { background:var(--ac); color:#fff; }
+.row { display:flex; gap:8px; margin:8px 0; } .row > * { flex:1; } textarea { width:100%; resize:vertical; }
+#out, #fileView { background:var(--card); border-radius:8px; padding:12px; min-height:30vh; max-height:55vh; overflow:auto; white-space:pre-wrap; word-break:break-word; }
+.tool { color:var(--mut); font-size:.85rem; } .err { color:#ff6b6b; }
+ul { list-style:none; padding:0; } li { background:var(--card); margin:6px 0; padding:12px; border-radius:8px; cursor:pointer; }
+#status { color:var(--mut); font-size:.85rem; min-height:1.2em; }

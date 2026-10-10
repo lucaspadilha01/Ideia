@@ -1,0 +1,14 @@
+{
+  "host": "127.0.0.1",
+  "port": 8787,
+  "tokenSha256": "COLE_O_HASH_DE_npm_run_gen-token",
+  "maxProfile": "edit",
+  "defaultProfile": "readonly",
+  "projects": [{ "name": "meu-projeto", "path": "/caminho/absoluto/do/projeto" }],
+  "allowedHosts": [],
+  "allowedOrigins": [],
+  "claudeBin": "claude",
+  "maxConcurrentRuns": 2,
+  "runTimeoutMs": 900000,
+  "dataDir": "./data"
+}
