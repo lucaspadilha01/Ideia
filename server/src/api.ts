@@ -2,7 +2,7 @@ import { createServer, type IncomingMessage, type Server, type ServerResponse } 
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
-import { bearerFrom, FailureLimiter, verifyToken } from "./auth.js";
+import { bearerFrom, clientIp, FailureLimiter, verifyToken } from "./auth.js";
 import { createMcpServer } from "./mcp.js";
 import type { RunEvent } from "./runner.js";
 import { Service, ServiceError } from "./service.js";
@@ -47,7 +47,7 @@ export function createApp(svc: Service, clientDir: string): Server {
     res.setHeader("cache-control", "no-store");
     res.setHeader("content-security-policy", "default-src 'self'; style-src 'self' 'unsafe-inline'; frame-ancestors 'none'");
     const url = new URL(req.url ?? "/", "http://x");
-    const ip = req.socket.remoteAddress ?? "?";
+    const ip = clientIp(req.socket.remoteAddress, req.headers["x-forwarded-for"]);
 
     // Host/Origin: mitiga DNS rebinding e CSRF de outras páginas.
     const host = (req.headers.host ?? "").toLowerCase();

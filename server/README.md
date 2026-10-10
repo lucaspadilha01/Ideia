@@ -31,7 +31,7 @@ Inspecione o MCP com `npx @modelcontextprotocol/inspector` (URL `http://127.0.0.
 
 ## Segurança (resumo / threat model)
 - Escuta só em `127.0.0.1`; acesso remoto via túnel com TLS (ver `../DEPLOY.md`). Config só guarda o **hash** do token.
-- Perfis por run, limitados por `maxProfile`: `readonly` (Read/Glob/Grep), `edit` (+Edit/Write, sem Bash), `full` (+Bash). Nunca usa `bypassPermissions`. Padrão `edit` como teto; habilite `full` conscientemente — equivale a shell no seu computador.
+- Perfis por run, limitados por `maxProfile`: `readonly` (Read/Glob/Grep), `edit` (+Edit/Write, sem Bash), `full` (+Bash). Todos os perfis negam `Read`/`Edit` de segredos (`.env*`, `*.pem`, `id_*`, `.ssh`, `.aws`…) para o próprio Claude — regra de negação do CLI, verificada com o `claude` real; no perfil `full` o Bash ainda pode contornar isso. Nunca usa `bypassPermissions`. Padrão `edit` como teto; habilite `full` conscientemente — equivale a shell no seu computador.
 - Prompt vai por stdin, `spawn` sem shell (sem injeção de comando). Projetos só da allowlist; `read_file`/`list_files` bloqueiam `..`, symlinks para fora, `.env`, chaves, `.git`.
-- Anti-brute-force (429), checagem de Host/Origin, limite de corpo (64 KB), timeout e cancelamento de runs, auditoria em `data/audit.jsonl` (sem conteúdo dos prompts).
+- Anti-brute-force (429, por IP real do cliente: usa `X-Forwarded-For` só quando a conexão vem de loopback, ou seja, de `tailscale serve`/túnel local), checagem de Host/Origin, limite de corpo (64 KB), timeout e cancelamento de runs, auditoria em `data/audit.jsonl` (sem conteúdo dos prompts).
 - Limitações v1: um único token/usuário; sem TOTP; sem aprovação interativa de ações (v2: canal de aprovação). O token fica no `localStorage` do navegador do iPhone — use um dispositivo com senha e rotacione o token se perder o aparelho.

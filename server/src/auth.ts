@@ -43,3 +43,17 @@ export class FailureLimiter {
     this.fails.delete(key);
   }
 }
+
+const LOOPBACK = new Set(["127.0.0.1", "::1", "::ffff:127.0.0.1"]);
+
+/**
+ * IP do cliente para rate-limit. Atrás de um proxy local (tailscale serve, cloudflared) a conexão vem
+ * de loopback; só então confiamos no último valor de X-Forwarded-For (o que o proxy anexou).
+ */
+export function clientIp(remoteAddress: string | undefined, xff: string | string[] | undefined): string {
+  const remote = remoteAddress ?? "?";
+  if (!LOOPBACK.has(remote)) return remote;
+  const raw = Array.isArray(xff) ? xff.join(",") : xff;
+  const last = raw?.split(",").map((x) => x.trim()).filter(Boolean).pop();
+  return last && last.length <= 64 ? last : remote;
+}

@@ -2,7 +2,8 @@ import { mkdtempSync, mkdirSync, symlinkSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
-import { bearerFrom, FailureLimiter, generateToken, verifyToken } from "../src/auth.js";
+import { bearerFrom, clientIp, FailureLimiter, generateToken, verifyToken } from "../src/auth.js";
+import { PROFILE_FLAGS } from "../src/config.js";
 import { FsGuard } from "../src/fsguard.js";
 import { parseStreamLine } from "../src/runner.js";
 
@@ -57,5 +58,22 @@ describe("parseStreamLine", () => {
     expect(parseStreamLine('{"type":"stream_event","event":{"type":"content_block_delta","delta":{"type":"text_delta","text":"a"}}}')).toEqual([{ type: "text", text: "a" }]);
     expect(parseStreamLine('{"type":"result","result":"fim","is_error":false}')[0]).toMatchObject({ type: "result", text: "fim" });
     expect(parseStreamLine("lixo")).toEqual([]);
+  });
+});
+
+describe("clientIp", () => {
+  it("usa X-Forwarded-For só quando a conexão é loopback", () => {
+    expect(clientIp("127.0.0.1", "9.9.9.9, 100.64.0.5")).toBe("100.64.0.5");
+    expect(clientIp("::ffff:127.0.0.1", undefined)).toBe("::ffff:127.0.0.1");
+    expect(clientIp("203.0.113.7", "1.2.3.4")).toBe("203.0.113.7");
+  });
+});
+
+describe("perfis", () => {
+  it("todo perfil nega leitura de segredos", () => {
+    for (const flags of Object.values(PROFILE_FLAGS)) {
+      const deny = flags[flags.indexOf("--disallowedTools") + 1]!;
+      expect(deny).toContain("Read(**/.env*)");
+    }
   });
 });

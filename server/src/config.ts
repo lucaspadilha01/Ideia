@@ -4,11 +4,15 @@ import { z } from "zod";
 export const PROFILES = ["readonly", "edit", "full"] as const;
 export type Profile = (typeof PROFILES)[number];
 
-/** Ferramentas do Claude Code liberadas por perfil (aplicado via flags do CLI). */
+/** Segredos que o Claude não deve ler/buscar/editar em nenhum perfil (as tools de arquivo do próprio Claude não passam pelo FsGuard). */
+const SECRET_GLOBS = ["**/.env*", "**/*.pem", "**/*.key", "**/*.p12", "**/*.pfx", "**/id_rsa*", "**/id_ed25519*", "**/id_ecdsa*", "**/.npmrc", "**/.netrc", "**/.ssh/**", "**/.aws/**", "**/.gnupg/**", "**/credentials*"];
+export const SECRET_DENY = ["Read", "Edit"].flatMap((t) => SECRET_GLOBS.map((g) => `${t}(${g})`));
+
+/** Ferramentas do Claude Code liberadas por perfil (aplicado via flags do CLI). Deny sempre vence allow. */
 export const PROFILE_FLAGS: Record<Profile, string[]> = {
-  readonly: ["--allowedTools", "Read Glob Grep", "--disallowedTools", "Bash Edit Write NotebookEdit", "--permission-mode", "default"],
-  edit: ["--allowedTools", "Read Glob Grep Edit Write", "--disallowedTools", "Bash", "--permission-mode", "acceptEdits"],
-  full: ["--allowedTools", "Read Glob Grep Edit Write Bash", "--permission-mode", "default"],
+  readonly: ["--allowedTools", "Read Glob Grep", "--disallowedTools", ["Bash", "Edit", "Write", "NotebookEdit", ...SECRET_DENY].join(" "), "--permission-mode", "default"],
+  edit: ["--allowedTools", "Read Glob Grep Edit Write", "--disallowedTools", ["Bash", ...SECRET_DENY].join(" "), "--permission-mode", "acceptEdits"],
+  full: ["--allowedTools", "Read Glob Grep Edit Write Bash", "--disallowedTools", SECRET_DENY.join(" "), "--permission-mode", "default"],
 };
 
 const ConfigSchema = z.object({
