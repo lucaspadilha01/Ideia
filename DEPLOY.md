@@ -16,8 +16,8 @@ Defina `projects` (caminhos absolutos) e, ao usar Tailscale, `allowedHosts: ["me
 Alternativa: Cloudflare Tunnel + Cloudflare Access (adiciona SSO na frente). **Não** use `tailscale funnel`/portas abertas sem uma camada extra de autenticação.
 
 ## 3. Manter rodando
-- macOS (launchd) / Linux (systemd): rode `node dist/src/index.js` com `CLAUDE_REMOTE_CONFIG=/caminho/config.json`, `WorkingDirectory=server`, usuário comum (nunca root).
-- Exemplo systemd: `ExecStart=/usr/bin/node dist/src/index.js`, `Restart=on-failure`, `NoNewPrivileges=true`.
+- macOS (launchd) / Linux (systemd): rode `node dist/index.js` com `CLAUDE_REMOTE_CONFIG=/caminho/config.json`, `WorkingDirectory=server`, usuário comum (nunca root).
+- Exemplo systemd: `ExecStart=/usr/bin/node dist/index.js`, `Restart=on-failure`, `NoNewPrivileges=true`.
 
 ## 4. Operação
 - Rotacionar token: `npm run gen-token`, atualizar `tokenSha256`, reiniciar, colar o novo token no iPhone.
